@@ -139,34 +139,6 @@ body {
     color: #333;
     min-height: 2em;
   }
-/* 팀명 입력칸 + 버튼 한 줄로 배치 */
-.team-name-field {
-  display: flex;
-  gap: 8px; /* 입력칸과 버튼 사이 간격 */
-  align-items: center;
-}
-
-/* 팀명 입력칸 너비 조정 (버튼과 함께 들어가도록) */
-.team-name-field input[type="text"] {
-  flex: 1; /* 버튼을 제외한 나머지 너비를 모두 차지 */
-}
-
-/* 랜덤 버튼 기본 스타일 (필요시 조정) */
-#randomTeamNameBtn {
-  padding: 0 12px;
-  height: 42px; /* input 높이에 맞춤 */
-  font-size: 1rem;
-  background: #ff9800;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-#randomTeamNameBtn:hover {
-  background: #e68900;
-}
   /* 모바일 전용 */
   @media (max-width: 600px) {
     .container {
