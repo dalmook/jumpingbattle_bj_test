@@ -1,152 +1,77 @@
-// Google Apps Script 웹앱 URL
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrQYWsGtcivWnD2ydP7PeNuWhEkeomZ7G1FpSnflUAjs00w6zT8bsjyPnugGmwyplS/exec';
+// 팀명을 배열로 정의합니다. 필요에 따라 수정하세요.
+const teamNames = [
+  "팀 A", "팀 B", "팀 C", "팀 D",
+  "팀 E", "팀 F", "팀 G", "팀 H"
+];
 
-document.addEventListener('DOMContentLoaded', () => {
-  // --- 랜덤 팀명 생성용 리스트 정의 ---
-  const teamNameList = [
-    '점핑히어로즈',
-    '배틀킹',
-    '점프스피릿',
-    '스카이라이더즈',
-    '점핑레전드',
-    '배틀브레이커',
-    '점프천사',
-    '스텝마스터',
-    '점핑제네시스',
-    '배틀스매셔'
-    // 필요한 만큼 팀명을 추가하세요.
-  ];
+// DOM 요소 가져오기
+const rouletteElement = document.getElementById("roulette");
+const spinButton = document.getElementById("spinButton");
 
-  // 각종 폼 요소들 가져오기
-  const walkInInput     = document.getElementById('walkInTime');
-  const roomInput       = document.getElementById('roomSize');
-  const difficultyInput = document.getElementById('difficulty');
-  const teamNameInput   = document.getElementById('teamName');
-  const randomBtn       = document.getElementById('randomTeamNameBtn');
-  const roomButtons     = document.querySelectorAll('.room-buttons button');
-  const difficultyButtons = document.querySelectorAll('.difficulty-buttons button');
-  const form            = document.getElementById('reservationForm');
-  const resultDiv       = document.getElementById('result');
-  const difficultyNote  = document.getElementById('difficultyNote');
+// 스핀 중인지 여부를 추적하는 변수
+let isSpinning = false;
 
-  // --- 랜덤 팀명 버튼 클릭 시 ---
-  randomBtn.addEventListener('click', () => {
-    const idx = Math.floor(Math.random() * teamNameList.length);
-    teamNameInput.value = teamNameList[idx];
-  });
+// 스핀 버튼 클릭 시 호출되는 함수
+function spinRoulette() {
+  if (isSpinning) return; // 이미 스핀 중이면 무시
+  isSpinning = true;
+  spinButton.disabled = true;
 
-  // --- 방 크기 선택 버튼 클릭 시 ---
-  roomButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      roomButtons.forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      roomInput.value = btn.dataset.value;
-    });
-  });
+  // 총 회전 횟수를 랜덤하게 정합니다 (40에서 70 사이)
+  const minSpins = 40;
+  const maxSpins = 70;
+  const totalSpins = Math.floor(Math.random() * (maxSpins - minSpins + 1)) + minSpins;
 
-  // --- 난이도 선택 버튼 클릭 시 ---
-  difficultyButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      difficultyButtons.forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      difficultyInput.value = btn.dataset.value;
+  // 초기/최종 딜레이(ms)
+  const initialDelay = 50;  // 빠르게 시작
+  const finalDelay = 300;   // 천천히 멈추면서 기대감 UP
 
-      // 난이도별 안내 문구 업데이트
-      const mapping = {
-        'ㅂ베이직': '(👶처음이거나, 아이와 함께라면^^🎈)',
-        'ㅇ이지':   '(😉처음인데, 내가 센스는 좀 있다!👍)',
-        'ㄴ노멀': '(💪평소 운동 좀 한다!🏃‍♂️)',
-        'ㅎ하드': '(🤯발이 안보인다. 너무 어려워요!🥵)'
-      };
-      difficultyNote.textContent = mapping[btn.dataset.value] || '(처음이시라면 베이직, 이지 추천!)';
-    });
-  });
+  // 각 회전별 딜레이를 선형적으로 계산
+  const delays = [];
+  for (let i = 0; i < totalSpins; i++) {
+    // i/totalSpins 비율만큼 딜레이를 느리게 한다
+    const delay = initialDelay + (finalDelay - initialDelay) * (i / totalSpins);
+    delays.push(delay);
+  }
 
-  // --- 폼 제출 시 이벤트 핸들러 ---
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const submitBtn = form.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
+  // 누적 딜레이를 구하고 setTimeout으로 순차 실행
+  let cumulativeDelay = 0;
 
-    // 최종 확인
-    if (!confirm('입력한 정보가 맞습니까?')) {
-      submitBtn.disabled = false;
-      return;
-    }
-
-    // 값 검증
-    const teamName = form.teamName.value.trim();
-    const adult     = Number(form.adultCount.value);
-    const youth     = Number(form.youthCount.value);
-    const vehicleVal = form.vehicle.value.trim();
-
-    if (!teamName) {
-      alert('팀명을 입력해주세요.');
-      submitBtn.disabled = false;
-      return;
-    }
-    if (adult + youth <= 0) {
-      alert('인원 수를 입력해주세요.');
-      submitBtn.disabled = false;
-      return;
-    }
-    if (vehicleVal !== '' && !/^\d{4}$/.test(vehicleVal)) {
-      alert('차량번호는 숫자 네 자리 또는 빈칸으로 입력해주세요.');
-      submitBtn.disabled = false;
-      return;
-    }
-
-    // 현재 시각 기반 슬롯 계산
-    const now = new Date();
-    let h = now.getHours();
-    const m = now.getMinutes();
-    const slots = [0, 20, 40];
-    let chosen = slots.find(s => m <= s + 3);
-    if (chosen === undefined) {
-      h = (h + 1) % 24;
-      chosen = 0;
-    }
-    const slotStr = `${String(h).padStart(2, '0')}:${String(chosen).padStart(2, '0')}`;
-    walkInInput.value = slotStr;
-
-    // 전송할 데이터(payload) 준비
-    const payload = {
-      walkInTime: slotStr,
-      roomSize:   roomInput.value,
-      teamName:   teamName,
-      difficulty: difficultyInput.value,
-      totalCount: adult + youth,
-      youthCount: youth,
-      vehicle:    vehicleVal || ''
-    };
-
-    // 백그라운드로 전송
-    resultDiv.textContent = '전송 중...';
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode:   'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body:   JSON.stringify(payload)
-    });
-
-    // 결제 금액 계산 및 화면 표시
-    const adultAmount = adult * 7000;
-    const youthAmount = youth * 5000;
-    const totalAmount = adultAmount + youthAmount;
-    resultDiv.innerHTML =
-      `전송 완료 ^^<br>` +
-      `결제 금액은 : <br>` +
-      `<strong style="font-size:1.2em; color:#d32f2f;">총 금액 = ${totalAmount.toLocaleString()}원</strong><br>` +
-      `성인 ${adult}명 × 7,000원 = ${adultAmount.toLocaleString()}원<br>` +
-      `청소년 ${youth}명 × 5,000원 = ${youthAmount.toLocaleString()}원<br>`;
-
-    // 2초 후 폼 초기화 및 버튼 활성화
+  for (let i = 0; i < totalSpins; i++) {
+    cumulativeDelay += delays[i];
     setTimeout(() => {
-      resultDiv.innerHTML = '';
-      form.reset();
-      roomButtons.forEach(b => b.classList.remove('selected'));
-      difficultyButtons.forEach(b => b.classList.remove('selected'));
-      submitBtn.disabled = false;
-    }, 2000);
-  });
+      // 순서대로 순환하며 팀명 표시
+      const currentIndex = i % teamNames.length;
+      rouletteElement.textContent = teamNames[currentIndex];
+
+      // 스핀 도는 중간에는 깜빡이는 효과 추가
+      rouletteElement.classList.add("blink");
+
+      // 마지막 회전에서 깜빡임 제거 후 멈춤 처리
+      if (i === totalSpins - 1) {
+        rouletteElement.classList.remove("blink");
+        isSpinning = false;
+        spinButton.disabled = false;
+        // 최종 결과를 강조하기 위해 잠깐 애니메이션을 줄 수도 있습니다.
+        // 예: 텍스트를 살짝 커졌다 작아졌다 하게 만들기
+        animationEndEffect();
+      }
+    }, cumulativeDelay);
+  }
+}
+
+// 스핀이 끝난 뒤 최종 결과 강조 애니메이션 함수
+function animationEndEffect() {
+  rouletteElement.style.transform = "scale(1.2)";
+  setTimeout(() => {
+    rouletteElement.style.transform = "scale(1)";
+  }, 400);
+}
+
+// 버튼에 이벤트 리스너 연결
+spinButton.addEventListener("click", spinRoulette);
+
+// 페이지 로드 시 초기 텍스트 설정
+document.addEventListener("DOMContentLoaded", () => {
+  rouletteElement.textContent = "랜덤 팀명을 눌러주세요!";
 });
