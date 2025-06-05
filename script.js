@@ -1,85 +1,72 @@
-// 팀명을 배열로 정의합니다. 필요에 따라 수정하세요.
+// 팀명 배열: 원하는 팀명으로 수정 가능
 const teamNames = [
-  '점핑히어로즈',
-    '배틀킹',
-    '점프스피릿',
-    '스카이라이더즈',
-    '점핑레전드',
-    '배틀브레이커',
-    '점프천사',
-    '스텝마스터',
-    '점핑제네시스',
-    '배틀스매셔'
+  "팀 A", "팀 B", "팀 C", "팀 D",
+  "팀 E", "팀 F", "팀 G", "팀 H",
+  "특별팀", "레전드팀", "히든팀"
 ];
 
 // DOM 요소 가져오기
 const rouletteElement = document.getElementById("roulette");
-const spinButton = document.getElementById("spinButton");
+const toggleButton = document.getElementById("toggleButton");
 
-// 스핀 중인지 여부를 추적하는 변수
-let isSpinning = false;
+let spinInterval = null;       // setInterval ID
+let autoStopTimeout = null;    // setTimeout ID
+let isSpinning = false;        // 회전 중 여부
 
-// 스핀 버튼 클릭 시 호출되는 함수
-function spinRoulette() {
-  if (isSpinning) return; // 이미 스핀 중이면 무시
+// 플레이어가 '시작' 버튼을 누르면 호출
+function startSpin() {
   isSpinning = true;
-  spinButton.disabled = true;
+  toggleButton.textContent = "멈춤";
+  toggleButton.disabled = false;
+  rouletteElement.classList.add("spin-mode");
+  rouletteElement.textContent = ""; // 내부 텍스트를 동적으로 처리하므로 클리어
+  const textSpan = document.createElement("span");
+  textSpan.classList.add("text");
+  rouletteElement.appendChild(textSpan);
 
-  // 총 회전 횟수를 랜덤하게 정합니다 (40에서 70 사이)
-  const minSpins = 40;
-  const maxSpins = 70;
-  const totalSpins = Math.floor(Math.random() * (maxSpins - minSpins + 1)) + minSpins;
+  // 빠른 속도로 계속 랜덤 팀명 보여주기 (100ms 간격)
+  spinInterval = setInterval(() => {
+    const randomName = teamNames[Math.floor(Math.random() * teamNames.length)];
+    textSpan.textContent = randomName;
+  }, 100);
 
-  // 초기/최종 딜레이(ms)
-  const initialDelay = 50;  // 빠르게 시작
-  const finalDelay = 300;   // 천천히 멈추면서 기대감 UP
-
-  // 각 회전별 딜레이를 선형적으로 계산
-  const delays = [];
-  for (let i = 0; i < totalSpins; i++) {
-    // i/totalSpins 비율만큼 딜레이를 느리게 한다
-    const delay = initialDelay + (finalDelay - initialDelay) * (i / totalSpins);
-    delays.push(delay);
-  }
-
-  // 누적 딜레이를 구하고 setTimeout으로 순차 실행
-  let cumulativeDelay = 0;
-
-  for (let i = 0; i < totalSpins; i++) {
-    cumulativeDelay += delays[i];
-    setTimeout(() => {
-      // 순서대로 순환하며 팀명 표시
-      const currentIndex = i % teamNames.length;
-      rouletteElement.textContent = teamNames[currentIndex];
-
-      // 스핀 도는 중간에는 깜빡이는 효과 추가
-      rouletteElement.classList.add("blink");
-
-      // 마지막 회전에서 깜빡임 제거 후 멈춤 처리
-      if (i === totalSpins - 1) {
-        rouletteElement.classList.remove("blink");
-        isSpinning = false;
-        spinButton.disabled = false;
-        // 최종 결과를 강조하기 위해 잠깐 애니메이션을 줄 수도 있습니다.
-        // 예: 텍스트를 살짝 커졌다 작아졌다 하게 만들기
-        animationEndEffect();
-      }
-    }, cumulativeDelay);
-  }
+  // 3초 후 자동으로 멈춤 처리
+  autoStopTimeout = setTimeout(() => {
+    if (isSpinning) {
+      stopSpin();
+    }
+  }, 3000);
 }
 
-// 스핀이 끝난 뒤 최종 결과 강조 애니메이션 함수
-function animationEndEffect() {
-  rouletteElement.style.transform = "scale(1.2)";
+// 플레이어가 '멈춤' 버튼을 누르거나 3초 경과 시 호출
+function stopSpin() {
+  isSpinning = false;
+  toggleButton.textContent = "시작";
+  rouletteElement.classList.remove("spin-mode");
+  clearInterval(spinInterval);
+  clearTimeout(autoStopTimeout);
+
+  // 현재 보여지는 팀명을 최종 결과로 확정
+  const finalName = rouletteElement.querySelector(".text")?.textContent || "팀 없음";
+  rouletteElement.textContent = finalName;
+  // 강조 애니메이션
+  rouletteElement.classList.add("final-effect");
   setTimeout(() => {
-    rouletteElement.style.transform = "scale(1)";
-  }, 400);
+    rouletteElement.classList.remove("final-effect");
+  }, 500);
 }
 
-// 버튼에 이벤트 리스너 연결
-spinButton.addEventListener("click", spinRoulette);
+// 버튼 클릭 이벤트: 회전 중이 아니면 start, 회전 중이면 stop
+toggleButton.addEventListener("click", () => {
+  if (!isSpinning) {
+    startSpin();
+  } else {
+    stopSpin();
+  }
+});
 
-// 페이지 로드 시 초기 텍스트 설정
+// 페이지 로드 시 초기 설정
 document.addEventListener("DOMContentLoaded", () => {
   rouletteElement.textContent = "랜덤 팀명을 눌러주세요!";
+  toggleButton.textContent = "시작";
 });
