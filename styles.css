@@ -1,112 +1,292 @@
-/* 공통 초기화 */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* styles.css */
 
-/* 배경에 화려한 그라데이션 애니메이션 적용 */
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  height: 100vh;
-  overflow: hidden;
-  background: linear-gradient(45deg, #FF5F6D, #FFC371, #8E2DE2, #4A00E0);
-  background-size: 400% 400%;
-  animation: gradientAnimation 10s ease infinite;
-}
-
-/* 그라데이션 애니메이션 키프레임 */
-@keyframes gradientAnimation {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+/* 1. 미묘한 그라데이션 배경 애니메이션 */
+@keyframes bgGradient {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* 전체 컨테이너: 가로 화면일 때 룰렛과 버튼이 나란히 보이도록 설정 */
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(120deg, #222, #444, #222);
+  background-size: 300% 300%;
+  animation: bgGradient 15s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+}
+
+/* 2. 컨테이너: 반투명 + 그림자 강조 */
 .container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-  height: 100%;
-  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  margin-top: 10px;
+  border-radius: 12px;
+  width: 95%;
+  max-width: 600px;
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    0 0 15px rgba(0, 122, 204, 0.3),
+    0 0 30px rgba(0, 122, 204, 0.15);
+  z-index: 1;
 }
 
-/* 룰렛 감싸는 래퍼: 중앙 정렬 */
-.roulette-wrapper {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* 3. 각 입력 섹션 구분선 */
+.field,
+.room-group,
+.difficulty-group {
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #ddd;
 }
 
-/* 룰렛 원형 박스 */
-.roulette {
-  width: 200px;
-  height: 200px;
-  border: 8px solid #FFD700;
-  border-radius: 50%;
-  background-color: #FFFFFF;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
+/* 4. field-group 내부엔 구분선 제거 */
+.field-group > .field {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* 5. 마지막 섹션 구분선 제거 */
+.field:last-of-type,
+.room-group:last-of-type,
+.difficulty-group:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.field,
+.field-group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
   color: #333;
-  text-align: center;
-  padding: 10px;
-  position: relative;
 }
 
-/* 룰렛 내부 글씨에 깜빡이는 효과 */
-.roulette.blink {
-  animation: blinkText 0.5s step-end infinite;
+label .note {
+  color: #3F48CC;
+  font-style: italic;
 }
 
-@keyframes blinkText {
-  50% { color: transparent; }
-  100% { color: #333; }
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.2rem;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background: #fafafa;
 }
 
-/* 버튼 래퍼: 중앙 정렬 */
-.button-wrapper {
-  flex: 1;
+/* 6. 입력 필드 포커스 시 네온빛 효과 */
+input[type="text"]:focus,
+input[type="number"]:focus {
+  outline: none;
+  border-color: #007ACC;
+  box-shadow: 0 0 8px rgba(0, 122, 204, 0.6),
+              0 0 16px rgba(0, 122, 204, 0.4);
+}
+
+/* 7. field-group 레이아웃 */
+.field-group { display: flex; gap: 4%; }
+.field-group .half { width: 48%; }
+
+.room-buttons,
+.difficulty-buttons {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 8px;
 }
 
-/* 스핀 버튼 스타일 */
-.spin-button {
-  padding: 15px 30px;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #fff;
-  background: linear-gradient(45deg, #FF8C00, #FFD700);
-  border: none;
-  border-radius: 25px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+.room-buttons button,
+.difficulty-buttons button {
+  font-size: 1.1rem;
+  flex: 1;
+  padding: 8px 0;
+  background: #fff;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #333;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
-.spin-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+/* 선택된 버튼 네온 효과 */
+.room-buttons button.selected,
+.difficulty-buttons button.selected {
+  background: #007ACC;
+  color: #fff;
+  border-color: #005A9E;
+  box-shadow: 0 0 10px rgba(0, 122, 204, 0.6),
+              0 0 20px rgba(0, 122, 204, 0.4);
 }
 
-.spin-button:disabled {
-  background: #bbb;
+/* 8. 팀명+랜덤 버튼 레이아웃 */
+.team-name-field {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.team-name-field input[type="text"] {
+  flex: 1;
+}
+
+/* 랜덤 팀명 버튼 */
+#randomTeamNameBtn {
+  padding: 0 12px;
+  height: 42px;
+  font-size: 1rem;
+  background: #FF5722;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+#randomTeamNameBtn:hover {
+  background: #E64A19;
+  box-shadow: 0 0 8px rgba(255, 87, 34, 0.6),
+              0 0 16px rgba(255, 87, 34, 0.4);
+}
+
+/* 9. 네온 네온한 서브밋 버튼 */
+button[type="submit"] {
+  display: inline-block;
+  width: 100%;
+  padding: 16px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  background: #28A745;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* 버튼 주변 네온 빛 애니메이션 */
+button[type="submit"]::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    #ff00ff, #1c068a, #00ffff, #ff00ff
+  );
+  background-size: 400% 400%;
+  border-radius: 8px;
+  z-index: -1;
+  animation: neonBorder 4s linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes neonBorder {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  background: #218838;
+  box-shadow: 0 0 12px rgba(33, 136, 56, 0.6),
+              0 0 24px rgba(33, 136, 56, 0.4);
+}
+
+button[type="submit"]:disabled {
+  background: #888;
   cursor: not-allowed;
-  box-shadow: none;
 }
 
-/* 가로 모드가 아닐 때(세로 모드)에도 어느 정도 대응할 수 있게 단순하게 재배치 */
-@media (orientation: portrait) {
+/* 10. 결과 메시지 */
+.result {
+  margin-top: 16px;
+  font-size: 1rem;
+  color: #333;
+  min-height: 2em;
+}
+
+/* 11. 태블릿/모바일 반응형 (기존) */
+@media (max-width: 600px) {
   .container {
-    flex-direction: column;
+    width: 100%;
+    max-width: 80%;
+    padding: 20px;
+    margin-top: 5px;
   }
-  .roulette {
-    margin-bottom: 30px;
+  input[type="text"],
+  input[type="number"] {
+    font-size: 1rem;
+    padding: 10px;
+  }
+  .room-buttons button,
+  .difficulty-buttons button {
+    font-size: 1rem;
+    padding: 6px 0;
+  }
+  button[type="submit"] {
+    padding: 12px;
+    font-size: 1rem;
+  }
+}
+
+/* 12. 스마트폰 가로 모드 최적화 */
+@media (orientation: landscape) and (max-width: 800px) {
+  body {
+    align-items: center; /* 세로 중앙 정렬 */
+  }
+  .container {
+    width: 100%;
+    height: 100vh;       /* 세로 전체 사용 */
+    max-width: none;
+    border-radius: 0;
+    padding: 20px;
+    margin-top: 0;
+    overflow-y: auto;    /* 스크롤 필요 시 세로 스크롤 가능 */
+  }
+  .team-name-field,
+  .field-group {
+    flex-direction: column; /* 가로모드에서 세로 스택으로 */
+    gap: 12px;
+  }
+  .field-group .half {
+    width: 100%;
+  }
+  input[type="text"],
+  input[type="number"] {
+    font-size: 1.1rem;
+    padding: 10px;
+  }
+  #randomTeamNameBtn {
+    width: 100%;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+  button[type="submit"] {
+    font-size: 1.1rem;
+    padding: 14px;
   }
 }
