@@ -1,170 +1,112 @@
-body {
-    margin: 0;
-    padding: 0;
-    background: url('jumpingbattle_character_bg.jpg') no-repeat top center;
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    font-family: 'Segoe UI', sans-serif;
-  }
-  .container {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255,255,255,0.95);
-    padding: 30px;
-    margin-top: 10px;
-    border-radius: 12px;
-    width: 95%;
-    max-width: 600px; /* 태블릿 대응 위해 확대 */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    z-index: 1;
-  }
-/* 구분선 추가: 각 입력 섹션 아래에 라인 */
-.field,
-.room-group,
-.difficulty-group {
-  padding-bottom: 12px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid #ddd;
-}
-/* field-group 내부의 각 field 구분선 제거 */
-.field-group > .field {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+/* 공통 초기화 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* 마지막 요소에는 구분선 제거 */
-.field:last-of-type,
-.room-group:last-of-type,
-.difficulty-group:last-of-type {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+/* 배경에 화려한 그라데이션 애니메이션 적용 */
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(45deg, #FF5F6D, #FFC371, #8E2DE2, #4A00E0);
+  background-size: 400% 400%;
+  animation: gradientAnimation 10s ease infinite;
 }
-  
-  .field, .field-group {
-    margin-bottom: 16px;
+
+/* 그라데이션 애니메이션 키프레임 */
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 전체 컨테이너: 가로 화면일 때 룰렛과 버튼이 나란히 보이도록 설정 */
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 100%;
+  padding: 20px;
+}
+
+/* 룰렛 감싸는 래퍼: 중앙 정렬 */
+.roulette-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 룰렛 원형 박스 */
+.roulette {
+  width: 200px;
+  height: 200px;
+  border: 8px solid #FFD700;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #333;
+  text-align: center;
+  padding: 10px;
+  position: relative;
+}
+
+/* 룰렛 내부 글씨에 깜빡이는 효과 */
+.roulette.blink {
+  animation: blinkText 0.5s step-end infinite;
+}
+
+@keyframes blinkText {
+  50% { color: transparent; }
+  100% { color: #333; }
+}
+
+/* 버튼 래퍼: 중앙 정렬 */
+.button-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 스핀 버튼 스타일 */
+.spin-button {
+  padding: 15px 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(45deg, #FF8C00, #FFD700);
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.spin-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.spin-button:disabled {
+  background: #bbb;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* 가로 모드가 아닐 때(세로 모드)에도 어느 정도 대응할 수 있게 단순하게 재배치 */
+@media (orientation: portrait) {
+  .container {
+    flex-direction: column;
   }
-  label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    color: #333;
+  .roulette {
+    margin-bottom: 30px;
   }
-  label .note {
-    color: #3F48CC;
-    font-style: italic;
-  }
-  input[type="text"], input[type="number"] {
-    width: 100%;
-    padding: 12px;
-    font-size: 1.2rem; /* 폰트 크기 확대 */
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-  }
-  
-  .field-group { display: flex; gap: 4%; }
-  .field-group .half { width: 48%; }
-  .room-buttons, .difficulty-buttons {
-    display: flex;
-    gap: 8px;
-  }
-  .room-buttons button, .difficulty-buttons button {
-    font-size: 1.1rem; /* 폰트 크기 조정 */
-    flex: 1;
-    padding: 8px 0;
-    background: #fff;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    font-weight: 600;
-    color: #333;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .room-buttons button.selected, .difficulty-buttons button.selected {
-    background: #007ACC;
-    color: #fff;
-    border-color: #005A9E;
-  }
-  button[type="submit"] {
-  display: inline-block; /* transform 효력을 위해 */
-  width: 100%;
-    width: 100%;
-    padding: 16px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #fff;
-    background: #28A745;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-    position: relative;
-    z-index: 1;
-    overflow: visible;
-  }
-  button[type="submit"]:hover:not(:disabled) { background: #218838; }
-  button[type="submit"]:disabled { background: #888; cursor: not-allowed; }
-    /* 네온 테두리 애니메이션 */
-  button[type="submit"]::before {
-    content: "";
-    position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
-    background: linear-gradient(45deg, #f0f, rgb(28, 6, 138), #f0f, #0ff);
-    background-size: 400%;
-    border-radius: 8px;
-    z-index: -1;
-    animation: neon-border 20s linear infinite;
-  }
-  
-  @keyframes neon-border {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  button[type="submit"]:hover { background: #218838; }
-  button[type="submit"]:disabled { background: #888; cursor: not-allowed; }
-  .result {
-    margin-top: 16px;
-    font-size: 1rem;
-    color: #333;
-    min-height: 2em;
-  }
-  /* 모바일 전용 */
-  @media (max-width: 600px) {
-    .container {
-      width: 100%;
-      max-width: 80%;
-      padding: 20px;
-      margin-top: 5px;
-    }
-    input[type="text"], input[type="number"] {
-      font-size: 1rem;
-      padding: 10px;
-    }
-    .room-buttons button,
-    .difficulty-buttons button {
-      font-size: 1rem;
-      padding: 6px 0;
-    }
-    button[type="submit"] {
-      padding: 12px;
-      font-size: 1rem;
-    }
-  }
-  /* 추가: 방 크기 별 인원 안내 */
-.room-info {
-  font-size: 0.85rem;
-  color: #666;
-  margin-top: 4px;
-  margin-bottom: 8px;
 }
