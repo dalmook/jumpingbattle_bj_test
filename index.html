@@ -2,10 +2,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>점핑배틀</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="container">
@@ -19,9 +19,9 @@
     </div>
 
     <form id="reservationForm" novalidate>
-      <input type="hidden" id="walkInTime" name="walkInTime">
-      <input type="hidden" id="roomSize" name="roomSize" required>
-      <input type="hidden" id="difficulty" name="difficulty" required>
+      <input type="hidden" id="walkInTime" name="walkInTime" />
+      <input type="hidden" id="roomSize" name="roomSize" required />
+      <input type="hidden" id="difficulty" name="difficulty" required />
 
       <!-- 1단계: 방 선택 -->
       <div class="step" data-step="1">
@@ -40,11 +40,11 @@
         <div class="field-group">
           <div class="field half">
             <label for="adultCount">성인 (인원)</label>
-            <input type="number" id="adultCount" name="adultCount" min="0" placeholder="0" required>
+            <input type="number" id="adultCount" name="adultCount" min="0" placeholder="0" required />
           </div>
           <div class="field half">
-            <label for="youthCount">청소년•어린이 (인원)</label>
-            <input type="number" id="youthCount" name="youthCount" min="0" placeholder="0" required>
+            <label for="youthCount">청소년·어린이 (인원)</label>
+            <input type="number" id="youthCount" name="youthCount" min="0" placeholder="0" required />
           </div>
         </div>
       </div>
@@ -53,21 +53,39 @@
       <div class="step" data-step="3" style="display:none;">
         <label>3단계: 팀명 입력</label>
         <div class="field">
-          <input type="text" id="teamName" name="teamName" placeholder="팀명을 입력하세요" required>
+          <input type="text" id="teamName" name="teamName" placeholder="팀명을 입력하세요" required />
         </div>
       </div>
 
       <!-- 4단계: 난이도 선택 -->
       <div class="step" data-step="4" style="display:none;">
         <label>4단계: 난이도 선택</label>
-      <div class="difficulty-buttons">
-        <button type="button" data-value="ㅂ베이직">베이직 ★</button>
-        <button type="button" data-value="ㅇ이지">이지 ★★</button>
-        <button type="button" data-value="ㅅ우주">우주 ★★★</button>
-        <button type="button" data-value="ㄴ노말">노말 ★★★★</button>
-        <button type="button" data-value="ㅎ하드">하드 ★★★★★</button>
-        <button type="button" data-value="ㅊ챌린져">챌린져 ★★★★★★</button>
-      </div>
+        <div class="difficulty-buttons">
+          <button type="button" data-value="ㅂ베이직">
+            <span class="label">베이직 ★</span>
+            <span class="desc">(👶처음이거나, 아이와 함께라면^^🎈)</span>
+          </button>
+          <button type="button" data-value="ㅇ이지">
+            <span class="label">이지 ★★</span>
+            <span class="desc">(😉처음인데, 내가 센스는 좀 있다!👍)</span>
+          </button>
+          <button type="button" data-value="ㅅ우주">
+            <span class="label">우주 ★★½</span>
+            <span class="desc">(🌌우주급 도전, 준비됐나요?🚀)</span>
+          </button>
+          <button type="button" data-value="ㄴ노말">
+            <span class="label">노말 ★★★</span>
+            <span class="desc">(💪평소 운동 좀 한다!🏃‍♂️)</span>
+          </button>
+          <button type="button" data-value="ㅎ하드">
+            <span class="label">하드 ★★★★</span>
+            <span class="desc">(🤯발이 안보인다! 너무 어려워요!🥵)</span>
+          </button>
+          <button type="button" data-value="ㅊ챌린져">
+            <span class="label">챌린져 ★★★★★</span>
+            <span class="desc">(🏆최강자 도전, 살아남을 수 있겠어?💥)</span>
+          </button>
+        </div>
       </div>
 
       <!-- 5단계: 차량번호 입력 -->
