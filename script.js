@@ -1,86 +1,115 @@
-// 팀명 배열: 원하는 팀명으로 수정 가능
-const teamNames = [
-    '점핑히어로즈',
-    '배틀킹',
-    '점프스피릿',
-    '스카이라이더즈',
-    '점핑레전드',
-    '배틀브레이커',
-    '점프천사',
-    '스텝마스터',
-    '점핑제네시스',
-    '배틀스매셔'
-];
+// script.js
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrQYWsGtcivWnD2ydP7PeNuWhEkeomZ7G1FpSnflUAjs00w6zT8bsjyPnugGmwyplS/exec';
 
-// DOM 요소 가져오기
-const rouletteElement = document.getElementById("roulette");
-const toggleButton = document.getElementById("toggleButton");
+document.addEventListener('DOMContentLoaded', () => {
+  // 멀티스텝 네비게이션
+  const steps = Array.from(document.querySelectorAll('.step'));
+  const dots = Array.from(document.querySelectorAll('.step-dot'));
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  let current = 0;
 
-let spinInterval = null;       // setInterval ID
-let autoStopTimeout = null;    // setTimeout ID
-let isSpinning = false;        // 회전 중 여부
-
-// 플레이어가 '시작' 버튼을 누르면 호출
-function startSpin() {
-  isSpinning = true;
-  toggleButton.textContent = "멈춤";
-  toggleButton.classList.remove("start-button");
-  toggleButton.classList.add("stop-button");
-  toggleButton.disabled = false;
-
-  rouletteElement.classList.add("spin-mode");
-  rouletteElement.textContent = ""; // 내부 텍스트 초기화
-  const textSpan = document.createElement("span");
-  textSpan.classList.add("text");
-  rouletteElement.appendChild(textSpan);
-
-  // 100ms 간격으로 무작위 팀명 표시
-  spinInterval = setInterval(() => {
-    const randomName = teamNames[Math.floor(Math.random() * teamNames.length)];
-    textSpan.textContent = randomName;
-  }, 100);
-
-  // 3초 후 자동으로 멈춤 처리
-  autoStopTimeout = setTimeout(() => {
-    if (isSpinning) {
-      stopSpin();
-    }
-  }, 3000);
-}
-
-// 플레이어가 '멈춤' 버튼을 누르거나 자동 타이머 만료 시 호출
-function stopSpin() {
-  isSpinning = false;
-  toggleButton.textContent = "시작";
-  toggleButton.classList.remove("stop-button");
-  toggleButton.classList.add("start-button");
-  rouletteElement.classList.remove("spin-mode");
-  clearInterval(spinInterval);
-  clearTimeout(autoStopTimeout);
-
-  // 현재 보여지는 팀명을 최종 결과로 확정
-  const finalName = rouletteElement.querySelector(".text")?.textContent || "팀 없음";
-  rouletteElement.textContent = finalName;
-
-  // 강조 애니메이션
-  rouletteElement.classList.add("final-effect");
-  setTimeout(() => {
-    rouletteElement.classList.remove("final-effect");
-  }, 500);
-}
-
-// 버튼 클릭 이벤트: 회전 중이 아니면 start, 회전 중이면 stop
-toggleButton.addEventListener("click", () => {
-  if (!isSpinning) {
-    startSpin();
-  } else {
-    stopSpin();
+  function showStep(n) {
+    steps.forEach((s, i) => s.style.display = i === n ? 'block' : 'none');
+    dots.forEach((d, i) => d.classList.toggle('active', i === n));
+    prevBtn.style.display = n === 0 ? 'none' : 'inline-block';
+    nextBtn.style.display = n === steps.length - 1 ? 'none' : 'inline-block';
+    submitBtn.style.display = n === steps.length - 1 ? 'inline-block' : 'none';
   }
-});
+  prevBtn.addEventListener('click', () => { current = Math.max(current-1,0); showStep(current); });
+  nextBtn.addEventListener('click', () => { current = Math.min(current+1,steps.length-1); showStep(current); });
+  showStep(current);
 
-// 페이지 로드 시 초기 설정
-document.addEventListener("DOMContentLoaded", () => {
-  rouletteElement.textContent = "랜덤 팀명을 눌러주세요!";
-  toggleButton.textContent = "시작";
-  // 이미 index.html에서 초기 클래스(start-button)를 설정했으므로 별도 추가 작업은 필요없음
+  // 방 선택
+  const roomButtons = document.querySelectorAll('.room-buttons button');
+  const roomInput = document.getElementById('roomSize');
+  roomButtons.forEach(btn => btn.addEventListener('click', () => {
+    roomButtons.forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    roomInput.value = btn.dataset.value;
+  }));
+
+  // 난이도 선택
+  const difficultyButtons = document.querySelectorAll('.difficulty-buttons button');
+  const difficultyInput = document.getElementById('difficulty');
+  const difficultyNote = document.getElementById('difficultyNote');
+  const noteMap = {
+    'ㅂ베이직': '(👶처음이거나, 아이와 함께라면^^🎈)',
+    'ㅇ이지':   '(😉처음인데, 내가 센스는 좀 있다!👍)',
+    'ㅅ우주':   '(🌌우주급 도전, 준비됐나요?🚀)',
+    'ㄴ노말':   '(💪평소 운동 좀 한다!🏃‍♂️)',
+    'ㅎ하드':   '(🤯발이 안보인다! 너무 어려워요!🥵)',
+    'ㅊ챌린져': '(🏆최강자 도전, 살아남을 수 있겠어?💥)'
+  };
+  difficultyButtons.forEach(btn => btn.addEventListener('click', () => {
+    difficultyButtons.forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    difficultyInput.value = btn.dataset.value;
+    difficultyNote.textContent = noteMap[btn.dataset.value] || '(처음이시라면 베이직, 이지 추천!)';
+  }));
+
+  // 폼 제출
+  const form = document.getElementById('reservationForm');
+  const resultDiv = document.getElementById('result');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    if (!confirm('입력한 정보가 맞습니까?')) { submitBtn.disabled = false; return; }
+
+    // 유효성
+    const teamName = form.teamName.value.trim();
+    const adult = Number(form.adultCount.value);
+    const youth = Number(form.youthCount.value);
+    if (!teamName) { alert('팀명을 입력해주세요.'); submitBtn.disabled = false; return; }
+    if (adult + youth <= 0) { alert('인원 수를 입력해주세요.'); submitBtn.disabled = false; return; }
+
+    // 슬롯 계산
+    const now = new Date();
+    let h = now.getHours(), m = now.getMinutes();
+    const slots = [0,20,40];
+    let chosen = slots.find(s => m <= s+3);
+    if (chosen === undefined) { h = (h+1)%24; chosen = 0; }
+    const slotStr = `${String(h).padStart(2,'0')}:${String(chosen).padStart(2,'0')}`;
+    document.getElementById('walkInTime').value = slotStr;
+
+    // 페이로드
+    const payload = {
+      walkInTime: slotStr,
+      roomSize: form.roomSize.value,
+      teamName,
+      difficulty: form.difficulty.value,
+      totalCount: adult + youth,
+      youthCount: youth,
+      vehicle: form.vehicle.value.trim() || ''
+    };
+
+    // 백그라운드 전송
+    resultDiv.textContent = '전송 중...';
+    fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+
+    // 결제 안내
+    const adultAmt = adult*7000, youthAmt = youth*5000, totalAmt = adultAmt+youthAmt;
+    resultDiv.innerHTML =
+      `전송 완료 ^^<br>` +
+      `결제 금액은 :<br>` +
+      `<strong style="font-size:1.2em; color:#d32f2f;">총 금액 = ${totalAmt.toLocaleString()}원</strong><br>` +
+      `성인 ${adult}명 × 7,000원 = ${adultAmt.toLocaleString()}원<br>` +
+      `청소년 ${youth}명 × 5,000원 = ${youthAmt.toLocaleString()}원<br>`;
+
+    // 초기화
+    setTimeout(() => {
+      resultDiv.innerHTML = '';
+      form.reset();
+      roomButtons.forEach(b=>b.classList.remove('selected'));
+      difficultyButtons.forEach(b=>b.classList.remove('selected'));
+      current = 0; showStep(current);
+      submitBtn.disabled = false;
+    }, 2000);
+  });
+
 });
