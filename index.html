@@ -15,6 +15,7 @@
       <span class="step-dot">2</span>
       <span class="step-dot">3</span>
       <span class="step-dot">4</span>
+      <span class="step-dot">5</span>
     </div>
 
     <form id="reservationForm" novalidate>
@@ -33,7 +34,7 @@
         </div>
       </div>
 
-      <!-- 2단계: 인원 및 팀명 -->
+      <!-- 2단계: 인원 입력 -->
       <div class="step" data-step="2" style="display:none;">
         <label>2단계: 인원 입력</label>
         <div class="field-group">
@@ -46,15 +47,19 @@
             <input type="number" id="youthCount" name="youthCount" min="0" placeholder="0" required>
           </div>
         </div>
+      </div>
+
+      <!-- 3단계: 팀명 입력 -->
+      <div class="step" data-step="3" style="display:none;">
+        <label>3단계: 팀명 입력</label>
         <div class="field">
-          <label for="teamName">팀명</label>
           <input type="text" id="teamName" name="teamName" placeholder="팀명을 입력하세요" required>
         </div>
       </div>
 
-      <!-- 3단계: 난이도 선택 -->
-      <div class="step" data-step="3" style="display:none;">
-        <label>3단계: 난이도 선택</label>
+      <!-- 4단계: 난이도 선택 -->
+      <div class="step" data-step="4" style="display:none;">
+        <label>4단계: 난이도 선택</label>
         <div class="difficulty-buttons">
           <button type="button" data-value="ㅂ베이직">베이직</button>
           <button type="button" data-value="ㅇ이지">이지</button>
@@ -66,9 +71,9 @@
         <div id="difficultyNote" class="note">(처음이시라면 베이직, 이지 추천!)</div>
       </div>
 
-      <!-- 4단계: 차량번호 입력 -->
-      <div class="step" data-step="4" style="display:none;">
-        <label>4단계: 차량번호 입력</label>
+      <!-- 5단계: 차량번호 입력 -->
+      <div class="step" data-step="5" style="display:none;">
+        <label>5단계: 차량번호 입력</label>
         <input
           type="text"
           id="vehicle"
