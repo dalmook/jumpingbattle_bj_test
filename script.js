@@ -34,19 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const diffBtns = document.querySelectorAll('.difficulty-buttons button');
   const diffInput= document.getElementById('difficulty');
   const diffNote = document.getElementById('difficultyNote');
-  const noteMap  = {
-    'ㅂ베이직': '(👶제일쉬움, 아이와 함께라면^^🎈)',
-    'ㅇ이지':   '(😉중간난이도, 내가 센스는 좀 있다!👍)',
-    'ㅈ우주':   '(🌌테마맵, 준비됐나요?🚀)',
-    'ㄴ노말':   '(💪어려움, 평소 운동 좀 한다!🏃‍♂️)',
-    'ㅎ하드':   '(🤯매우 어려움, 발이 안보인다! 너무 어려워요!🥵)',
-    'ㅊ챌린저':'(🏆지옥 난이도, 살아남을 수 있겠어?💥)'
-  };
-  diffBtns.forEach(btn => btn.addEventListener('click', ()=>{
-    diffBtns.forEach(b=>b.classList.remove('selected'));
+  // 아래처럼 설명 영역을 제거하고, 선택만 처리하도록 변경
+  difficultyButtons.forEach(btn => btn.addEventListener('click', () => {
+    difficultyButtons.forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
-    diffInput.value = btn.dataset.value;
-    diffNote.textContent = noteMap[btn.dataset.value] || '(처음이시라면 베이직, 이지 추천!)';
+    difficultyInput.value = btn.dataset.value;
   }));
 
   // 폼 제출
