@@ -33,17 +33,16 @@ body {
   background: #007ACC; color: #fff;
 }
 
-/* 기본 폼 스타일 (생략 가능) */
-.field, .field-group, .difficulty-group { margin-bottom: 16px; }
+/* 기본 폼 스타일 */
 label { display: block; margin-bottom: 6px; font-weight: 600; color: #333; }
 label .note { color: #3F48CC; font-style: italic; }
 input[type="text"], input[type="number"] {
   width: 100%; padding: 12px; font-size: 1.2rem;
   border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;
 }
-.field-group { display: flex; gap: 4%; }
+.field-group { display: flex; gap: 4%; margin-bottom: 16px; }
 .field-group .half { width: 48%; }
-.room-buttons, .difficulty-buttons { display: flex; gap: 8px; }
+.room-buttons, .difficulty-buttons { display: flex; gap: 8px; margin-bottom: 16px; }
 .room-buttons button, .difficulty-buttons button {
   flex: 1; padding: 8px 0; font-size: 1.1rem;
   background: #fff; border: 2px solid #ddd;
