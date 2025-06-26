@@ -1,173 +1,82 @@
-/* ─── 공통 초기화 ──────────────────────────────────────────────────── */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* ─── 배경 이미지 & 오버레이 ─────────────────────────────────────────── */
+/* styles.css */
 body {
-  font-family: 'Noto Sans KR', sans-serif;
-  height: 100vh;
-  overflow: hidden;
-  position: relative;
-  /* 배경 이미지 적용 */
-}
-body::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('jumpingbattle_character_bg.jpg') no-repeat center center;
+  margin: 0; padding: 0;
+  background: url('jumpingbattle_character_bg.jpg') no-repeat top center;
   background-size: cover;
-  filter: brightness(0.7); /* 살짝 어둡게 조정해서 오버레이 가독성 확보 */
-  z-index: -2;
+  display: flex; justify-content: center; align-items: flex-start;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
 }
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* 반투명 검정 레이어 */
-  z-index: -1;
-}
-
-/* ─── 배경 그라데이션 애니메이션 (원하시면 유지/제거) ───────────────── */
-/* 아래는 배경 그라데이션을 추가로 주고 싶을 때 사용 가능합니다. */
-/*
-body {
-  animation: gradientAnimation 12s ease infinite;
-  background: linear-gradient(45deg, rgba(255,95,109,0.6), rgba(255,195,113,0.6), rgba(142,45,226,0.6), rgba(74,0,224,0.6));
-  background-size: 400% 400%;
-}
-@keyframes gradientAnimation {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-*/
-
-/* ─── 레이아웃: 가로 모드 기준 ───────────────────────────────────────── */
 .container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-  height: 100%;
-  padding: 20px;
-  position: relative; /* 오버레이 위에 놓이게 */
+  position: fixed; top: 0; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.95);
+  padding: 30px; margin-top: 10px;
+  border-radius: 12px; width: 95%; max-width: 600px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   z-index: 1;
 }
 
-/* 세로 모드일 때 세로 정렬 */
-@media (orientation: portrait) {
-  .container {
-    flex-direction: column;
-  }
-  .roulette {
-    margin-bottom: 30px;
-  }
+/* Step Indicator */
+.steps-indicator {
+  display: flex; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.step-dot {
+  width: 25px; height: 25px;
+  border-radius: 50%; background: #ddd;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: bold; color: #666;
+  transition: background 0.3s;
+}
+.step-dot.active {
+  background: #007ACC; color: #fff;
 }
 
-/* ─── 룰렛 박스 스타일 ──────────────────────────────────────────────── */
-.roulette-wrapper {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* 기본 폼 스타일 (생략 가능) */
+.field, .field-group, .difficulty-group { margin-bottom: 16px; }
+label { display: block; margin-bottom: 6px; font-weight: 600; color: #333; }
+label .note { color: #3F48CC; font-style: italic; }
+input[type="text"], input[type="number"] {
+  width: 100%; padding: 12px; font-size: 1.2rem;
+  border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box;
+}
+.field-group { display: flex; gap: 4%; }
+.field-group .half { width: 48%; }
+.room-buttons, .difficulty-buttons { display: flex; gap: 8px; }
+.room-buttons button, .difficulty-buttons button {
+  flex: 1; padding: 8px 0; font-size: 1.1rem;
+  background: #fff; border: 2px solid #ddd;
+  border-radius: 6px; font-weight: 600; color: #333;
+  cursor: pointer; transition: background 0.2s;
+}
+.room-buttons button.selected,
+.difficulty-buttons button.selected {
+  background: #007ACC; color: #fff; border-color: #005A9E;
 }
 
-.roulette {
-  width: 220px;
-  height: 220px;
-  border: 10px solid #ffd700;
-  border-radius: 50%;
-  background-color: #ffffff;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
-  padding: 15px;
-  position: relative;
-  transition: transform 0.3s ease;
-  z-index: 1;
+/* 네비게이션 버튼 */
+.step-nav {
+  display: flex; justify-content: space-between;
+  margin-top: 20px;
+}
+.step-nav button {
+  padding: 12px 20px; border: none; border-radius: 6px;
+  cursor: pointer; font-weight: 600;
+}
+#prevBtn { background: #ccc; color: #333; }
+#nextBtn { background: #28A745; color: #fff; }
+#submitBtn { background: #005A9E; color: #fff; }
+
+/* 결과 영역 */
+.result {
+  margin-top: 16px; font-size: 1rem; color: #333; min-height: 2em;
 }
 
-/* 회전 중일 때 펄스 애니메이션을 추가 */
-.roulette.spin-mode {
-  animation: pulse 0.8s ease-in-out infinite;
-}
-
-/* 룰렛 내부 글자 깜빡임 */
-@keyframes blinkText {
-  0% { color: #333; }
-  50% { color: transparent; }
-  100% { color: #333; }
-}
-.roulette.spin-mode .text {
-  animation: blinkText 0.2s step-end infinite;
-}
-
-/* 파동처럼 커졌다 작아졌다 하는 효과 (회전 멈출 때 강조용) */
-.roulette.final-effect {
-  animation: finalPulse 0.4s ease-out;
-}
-@keyframes finalPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-/* ─── 버튼 스타일 ─────────────────────────────────────────────────── */
-/* 기본 spin-button 공통 속성 */
-.button-wrapper {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-}
-
-.spin-button {
-  padding: 18px 36px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #fff;
-  border: none;
-  border-radius: 30px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-/* ─── 시작 버튼(green 계열) ───────────────────────────── */
-.start-button {
-  background: linear-gradient(45deg, #38b000, #8ecae6);
-}
-.start-button:hover {
-  transform: scale(1.08);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-}
-
-/* ─── 멈춤 버튼(red 계열) ───────────────────────────── */
-.stop-button {
-  background: linear-gradient(45deg, #d90429, #ff6700);
-}
-.stop-button:hover {
-  transform: scale(1.08);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-}
-
-/* 비활성화 상태 */
-.spin-button:disabled {
-  background: #bbbbbb;
-  cursor: not-allowed;
-  box-shadow: none;
+/* 모바일 */
+@media (max-width: 600px) {
+  .container { width: 100%; max-width: 80%; padding: 20px; }
+  input[type="text"], input[type="number"] { font-size: 1rem; padding: 10px; }
+  .room-buttons button, .difficulty-buttons button { font-size: 1rem; padding: 6px 0; }
+  .step-nav button { padding: 10px; font-size: 1rem; }
 }
