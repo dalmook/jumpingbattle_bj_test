@@ -18,6 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn.style.display = n === steps.length-1 ? 'inline-block' : 'none';
   }
 
+  // 1-5단계 dot 클릭 시 해당 스텝으로 이동
+  dots.forEach((dot, idx) => {
+    dot.addEventListener('click', () => {
+      current = idx;
+      showStep(current);
+    });
+  });
+
   prevBtn.addEventListener('click', () => {
     current = Math.max(current - 1, 0);
     showStep(current);
