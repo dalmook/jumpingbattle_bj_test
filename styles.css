@@ -11,19 +11,6 @@ body {
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* STEP 카운터 */
-.step-counter {
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #333;
-}
-/* 필수 표시(*) */
-.required {
-  color: #d32f2f;
-  margin-left: 2px;
-}
 .container {
   position: fixed;
   top: 0; left: 50%;
@@ -37,14 +24,17 @@ body {
   z-index: 1;
 }
 
-/* Step Indicator (반응형) */
+/* Step Indicator (반응형 + 하이라이트) */
 .steps-indicator {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
   flex-wrap: nowrap;
-  padding: 0 8px;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  background: rgba(0, 122, 204, 0.1); /* 연한 파랑 배경 */
+  border: 2px solid #007ACC;         /* 파랑 테두리 */
+  border-radius: 8px;
 }
 .step-dot {
   flex: 1;
@@ -52,12 +42,16 @@ body {
   text-align: center;
   white-space: nowrap;
   padding: 8px 4px;
+  width: 32px; height: 32px;
+  line-height: 28px;
   border-radius: 50%;
-  background: #ddd;
-  color: #666;
+  background: #fff;                  /* 흰 바탕 */
+  border: 2px solid #007ACC;         /* 파랑 테두리 */
+  color: #007ACC;                    /* 파랑 글씨 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   font-weight: bold;
+  font-size: clamp(0.9rem, 5vw, 1.3rem);
   transition: background 0.3s, color 0.3s;
-  font-size: clamp(0.8rem, 4vw, 1.2rem);
 }
 .step-dot.active {
   background: #007ACC;
@@ -67,6 +61,8 @@ body {
   .step-dot {
     padding: 6px 2px;
     font-size: 0.8rem;
+    width: 28px; height: 28px;
+    line-height: 24px;
   }
 }
 
@@ -127,11 +123,11 @@ input[type="number"] {
 /* 팀명 입력 + 자동생성 버튼 */
 .auto-teamname {
   display: flex;
-  flex-direction: column; /* 입력창은 라벨 아래, 버튼도 라벨에 속함 */
+  flex-direction: column;
   margin-bottom: 16px;
 }
 .teamname-label {
-  display: inline-flex;   /* 라벨 텍스트 옆에 버튼 위치 */
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   font-weight: 600;
