@@ -2,15 +2,29 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrQYWsGtcivWnD2ydP7PeNuWhEkeomZ7G1FpSnflUAjs00w6zT8bsjyPnugGmwyplS/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const steps       = Array.from(document.querySelectorAll('.step'));
-  const dots        = Array.from(document.querySelectorAll('.step-dot'));
-  const stepCounter = document.getElementById('stepCounter');
-  const prevBtn     = document.getElementById('prevBtn');
-  const nextBtn     = document.getElementById('nextBtn');
-  const submitBtn   = document.getElementById('submitBtn');
-  let current = 0;
+  // 1) 방 선택 버튼
+  const roomButtons = document.querySelectorAll('.room-buttons button');
+  const roomInput   = document.getElementById('roomSize');
+  roomButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      roomButtons.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      roomInput.value = btn.dataset.value;
+    });
+  });
 
-  // 팀명 자동 생성 리스트
+  // 2) 난이도 선택 버튼
+  const diffButtons = document.querySelectorAll('.difficulty-buttons button');
+  const diffInput   = document.getElementById('difficulty');
+  diffButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      diffButtons.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      diffInput.value = btn.dataset.value;
+    });
+  });
+
+  // 3) 팀명 자동 생성
   const teamNameList = [
     '순대', '떡볶이', '트랄랄레로 트랄랄라', '봄바르디로 크로코딜로', '퉁퉁퉁퉁퉁퉁퉁퉁퉁 사후르',
     '리릴리 라릴라', '보네카 암발라부', '브르르 브르르 파타핌', '침판지니 바나니니', '봄봄비니 구지니',
@@ -28,157 +42,91 @@ document.addEventListener('DOMContentLoaded', () => {
     '호빵맨', '검정고무신', '요리왕비룡', '배추도사 무도사', '돈테크만', '보거스', '괴짜가족',
     '보노보노', '구린내', '구데기', '파리지옥'
   ];
-
-  // 단계별 유효성 검사
-  function validateStep(n) {
-    let ok = false;
-    switch (n) {
-      case 0:
-        ok = !!document.getElementById('roomSize').value;
-        break;
-      case 1:
-        const a = Number(document.getElementById('adultCount').value);
-        const y = Number(document.getElementById('youthCount').value);
-        ok = (a + y) > 0;
-        break;
-      case 2:
-        ok = !!document.getElementById('teamName').value.trim();
-        break;
-      case 3:
-        ok = !!document.getElementById('difficulty').value;
-        break;
-      case 4:
-        ok = true;
-        break;
-    }
-    nextBtn.disabled = !ok;
-  }
-
-  // 화면 전환 및 UI 업데이트
-  function showStep(n) {
-    steps.forEach((s,i) => s.style.display = i === n ? 'block' : 'none');
-    dots.forEach((d,i) => d.classList.toggle('active', i === n));
-    prevBtn.style.display   = n === 0               ? 'none' : 'inline-block';
-    nextBtn.style.display   = n === steps.length-1  ? 'none' : 'inline-block';
-    submitBtn.style.display = n === steps.length-1  ? 'inline-block' : 'none';
-    stepCounter.textContent = `STEP ${n+1}/${steps.length}`;
-    validateStep(n);
-  }
-
-  // 이벤트 바인딩
-  dots.forEach((dot, idx) => dot.addEventListener('click', () => {
-    current = idx;
-    showStep(current);
-  }));
-  prevBtn.addEventListener('click', () => showStep(--current));
-  nextBtn.addEventListener('click', () => showStep(++current));
-
-  // 방 선택
-  document.querySelectorAll('.room-buttons button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.room-buttons button')
-        .forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      document.getElementById('roomSize').value = btn.dataset.value;
-      validateStep(current);
-    });
-  });
-
-  // 인원 입력
-  ['adultCount','youthCount'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
-      if (current === 1) validateStep(1);
-    });
-  });
-
-  // 팀명 자동 생성
-  document.getElementById('generateTeamNameBtn').addEventListener('click', () => {
+  const genBtn = document.getElementById('generateTeamNameBtn');
+  const teamInput = document.getElementById('teamName');
+  genBtn.addEventListener('click', () => {
     const rand = teamNameList[Math.floor(Math.random() * teamNameList.length)];
-    document.getElementById('teamName').value = rand;
-    if (current === 2) validateStep(2);
-  });
-  // 팀명 직접 입력
-  document.getElementById('teamName').addEventListener('input', () => {
-    if (current === 2) validateStep(2);
+    teamInput.value = rand;
   });
 
-  // 난이도 선택
-  document.querySelectorAll('.difficulty-buttons button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.difficulty-buttons button')
-        .forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      document.getElementById('difficulty').value = btn.dataset.value;
-      if (current === 3) validateStep(3);
-    });
-  });
+  // 4) 폼 제출
+  const form = document.getElementById('reservationForm');
+  const resultDiv = document.createElement('div');
+  resultDiv.className = 'result';
+  form.appendChild(resultDiv);
 
-  // 폼 제출 처리 (기존 로직 유지)
-  const form      = document.getElementById('reservationForm');
-  const resultDiv = document.getElementById('result');
   form.addEventListener('submit', e => {
     e.preventDefault();
-    submitBtn.disabled = true;
 
-    const teamName = form.teamName.value.trim();
-    const adult    = Number(form.adultCount.value);
-    const youth    = Number(form.youthCount.value);
-    if (!teamName) {
-      alert('팀명을 입력해주세요.');
-      submitBtn.disabled = false;
+    // 필수값 체크
+    const room   = form.roomSize.value;
+    const adult  = Number(form.adultCount.value);
+    const youth  = Number(form.youthCount.value);
+    const team   = form.teamName.value.trim();
+    const diff   = form.difficulty.value;
+    if (!room) {
+      alert('방을 선택해주세요.');
       return;
     }
     if (adult + youth <= 0) {
       alert('인원 수를 입력해주세요.');
-      submitBtn.disabled = false;
+      return;
+    }
+    if (!team) {
+      alert('팀명을 입력해주세요.');
+      return;
+    }
+    if (!diff) {
+      alert('난이도를 선택해주세요.');
       return;
     }
 
     // 슬롯 계산
-    const now     = new Date();
-    let h         = now.getHours(), m = now.getMinutes();
-    const slots   = [0, 20, 40];
-    let chosen    = slots.find(s => m <= s + 3);
+    const now = new Date();
+    let h = now.getHours(), m = now.getMinutes();
+    const slots = [0, 20, 40];
+    let chosen = slots.find(s => m <= s + 3);
     if (chosen === undefined) { h = (h + 1) % 24; chosen = 0; }
     const slotStr = `${String(h).padStart(2,'0')}:${String(chosen).padStart(2,'0')}`;
     document.getElementById('walkInTime').value = slotStr;
 
-    // 백그라운드 전송
+    // 페이로드 준비
     const payload = {
       walkInTime: slotStr,
-      roomSize:   form.roomSize.value,
-      teamName,
-      difficulty: form.difficulty.value,
+      roomSize:   room,
+      teamName:   team,
+      difficulty: diff,
       totalCount: adult + youth,
       youthCount: youth,
       vehicle:    form.vehicle.value.trim() || ''
     };
+
+    // 전송
     resultDiv.textContent = '전송 중...';
-    fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
 
     // 결제 안내
     const adultAmt = adult * 7000;
     const youthAmt = youth * 5000;
     const totalAmt = adultAmt + youthAmt;
     resultDiv.innerHTML =
-      `전송 완료 ^^<br>` +
-      `결제 금액은 :<br>` +
-      `<strong style="font-size:1.2em; color:#d32f2f;">총 금액 = ${totalAmt.toLocaleString()}원</strong><br>` +
+      `전송 완료 ^^<br>`+
+      `총 금액 = ${totalAmt.toLocaleString()}원<br>` +
       `성인 ${adult}명 × 7,000원 = ${adultAmt.toLocaleString()}원<br>` +
-      `청소년 ${youth}명 × 5,000원 = ${youthAmt.toLocaleString()}원<br>`;
+      `청소년 ${youth}명 × 5,000원 = ${youthAmt.toLocaleString()}원`;
 
-    // 초기화
+    // 리셋
     setTimeout(() => {
-      resultDiv.innerHTML = '';
       form.reset();
-      document.querySelectorAll('.room-buttons button').forEach(b => b.classList.remove('selected'));
-      document.querySelectorAll('.difficulty-buttons button').forEach(b => b.classList.remove('selected'));
-      current = 0;
-      showStep(current);
-      submitBtn.disabled = false;
-    }, 2000);
+      roomButtons.forEach(b => b.classList.remove('selected'));
+      diffButtons.forEach(b => b.classList.remove('selected'));
+      teamInput.value = '';
+      resultDiv.textContent = '';
+    }, 3000);
   });
-
-  // 초기화
-  showStep(current);
 });
