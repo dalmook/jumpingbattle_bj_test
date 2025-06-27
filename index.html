@@ -1,10 +1,9 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>점핑배틀 예약</title>
+  <title>점핑배틀</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -16,7 +15,7 @@
 
     <!-- 1. 방 선택 -->
     <div class="card">
-      <h3>1. 방 선택 (관리자 선택사항)</h3>
+      <h3>1. 방 선택</h3>
       <div class="room-buttons">
         <button type="button" data-value="B1">대형 (B1)</button>
         <button type="button" data-value="A1">중형 (A1)</button>
@@ -89,7 +88,7 @@
         inputmode="numeric"
         pattern="[0-9]*"
       />
-      <p class="note">(주차 등록이 필요 없으면 “최종 완료” 눌러주세요)</p>
+      <p class="note">(차량 없으면 그대로 진행하세요)</p>
     </div>
 
     <!-- 최종 완료 버튼 -->
@@ -97,6 +96,9 @@
       <button type="submit" id="submitBtn">최종 완료 🚀</button>
     </div>
   </form>
+
+  <!-- 결제 안내 출력 영역 -->
+  <div id="result" class="result"></div>
 
   <script src="script.js" defer></script>
 </body>
