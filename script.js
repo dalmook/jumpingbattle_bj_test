@@ -2,7 +2,7 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrQYWsGtcivWnD2ydP7PeNuWhEkeomZ7G1FpSnflUAjs00w6zT8bsjyPnugGmwyplS/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1) 방 선택 버튼
+  // 1) 방 선택
   const roomButtons = document.querySelectorAll('.room-buttons button');
   const roomInput   = document.getElementById('roomSize');
   roomButtons.forEach(btn => {
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 2) 난이도 선택 버튼
+  // 2) 난이도 선택
   const diffButtons = document.querySelectorAll('.difficulty-buttons button');
   const diffInput   = document.getElementById('difficulty');
   diffButtons.forEach(btn => {
@@ -49,11 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
     teamInput.value = rand;
   });
 
-  // 4) 폼 제출
-  const form = document.getElementById('reservationForm');
-  const resultDiv = document.createElement('div');
-  resultDiv.className = 'result';
-  form.appendChild(resultDiv);
+  // 4) 폼 제출 및 결제 안내
+  const form      = document.getElementById('reservationForm');
+  const resultDiv = document.getElementById('result');
 
   form.addEventListener('submit', e => {
     e.preventDefault();
@@ -64,22 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const youth  = Number(form.youthCount.value);
     const team   = form.teamName.value.trim();
     const diff   = form.difficulty.value;
-    if (!room) {
-      alert('방을 선택해주세요.');
-      return;
-    }
-    if (adult + youth <= 0) {
-      alert('인원 수를 입력해주세요.');
-      return;
-    }
-    if (!team) {
-      alert('팀명을 입력해주세요.');
-      return;
-    }
-    if (!diff) {
-      alert('난이도를 선택해주세요.');
-      return;
-    }
+    if (!room)    { alert('방을 선택해주세요.'); return; }
+    if (adult + youth <= 0) { alert('인원 수를 입력해주세요.'); return; }
+    if (!team)    { alert('팀명을 입력해주세요.'); return; }
+    if (!diff)    { alert('난이도를 선택해주세요.'); return; }
 
     // 슬롯 계산
     const now = new Date();
@@ -104,8 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 전송
     resultDiv.textContent = '전송 중...';
     fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
@@ -115,12 +100,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const youthAmt = youth * 5000;
     const totalAmt = adultAmt + youthAmt;
     resultDiv.innerHTML =
-      `전송 완료 ^^<br>`+
-      `총 금액 = ${totalAmt.toLocaleString()}원<br>` +
+      `🚀 전송 완료!<br>` +
+      `<strong>총 금액: ${totalAmt.toLocaleString()}원</strong><br>` +
       `성인 ${adult}명 × 7,000원 = ${adultAmt.toLocaleString()}원<br>` +
       `청소년 ${youth}명 × 5,000원 = ${youthAmt.toLocaleString()}원`;
 
-    // 리셋
+    // 초기화
     setTimeout(() => {
       form.reset();
       roomButtons.forEach(b => b.classList.remove('selected'));
