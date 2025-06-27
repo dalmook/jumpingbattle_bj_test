@@ -11,6 +11,19 @@ body {
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* STEP 카운터 */
+.step-counter {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+/* 필수 표시(*) */
+.required {
+  color: #d32f2f;
+  margin-left: 2px;
+}
 .container {
   position: fixed;
   top: 0; left: 50%;
@@ -24,22 +37,37 @@ body {
   z-index: 1;
 }
 
-/* Step Indicator */
+/* Step Indicator (반응형) */
 .steps-indicator {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+  flex-wrap: nowrap;
+  padding: 0 8px;
 }
 .step-dot {
-  width: 25px; height: 25px;
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  white-space: nowrap;
+  padding: 8px 4px;
   border-radius: 50%;
   background: #ddd;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: bold; color: #666;
-  transition: background 0.3s;
+  color: #666;
+  font-weight: bold;
+  transition: background 0.3s, color 0.3s;
+  font-size: clamp(0.8rem, 4vw, 1.2rem);
 }
 .step-dot.active {
-  background: #007ACC; color: #fff;
+  background: #007ACC;
+  color: #fff;
+}
+@media (max-width: 400px) {
+  .step-dot {
+    padding: 6px 2px;
+    font-size: 0.8rem;
+  }
 }
 
 /* 기본 스타일 */
@@ -94,6 +122,43 @@ input[type="number"] {
   background: #007ACC;
   color: #fff;
   border-color: #005A9E;
+}
+
+/* 팀명 입력 + 자동생성 버튼 */
+.auto-teamname {
+  display: flex;
+  flex-direction: column; /* 입력창은 라벨 아래, 버튼도 라벨에 속함 */
+  margin-bottom: 16px;
+}
+.teamname-label {
+  display: inline-flex;   /* 라벨 텍스트 옆에 버튼 위치 */
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+.tiny-btn {
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  background: #feb47b;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.tiny-btn:hover {
+  background: #ff9a5c;
+}
+.auto-teamname input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1.1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
 }
 
 /* 난이도 선택 (세로 + 설명) */
@@ -183,6 +248,10 @@ input[type="number"] {
   .difficulty-buttons button {
     font-size: 1rem;
     padding: 10px;
+  }
+  .tiny-btn {
+    padding: 2px 4px;
+    font-size: 0.75rem;
   }
   .step-nav button {
     padding: 10px;
