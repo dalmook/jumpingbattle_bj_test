@@ -5,8 +5,9 @@ body {
   background: url('jumpingbattle_character_bg.jpg') no-repeat top center;
   background-size: cover;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;      /* 세로 스택으로 변경 */
+  align-items: center;         /* 가로 중앙 정렬 */
+  justify-content: flex-start; /* 세로는 위에서부터 시작 */
   min-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
 }
