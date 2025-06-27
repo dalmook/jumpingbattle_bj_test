@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -9,13 +8,16 @@
 </head>
 <body>
   <div class="container">
+    <!-- ★ STEP 카운터 추가 -->
+    <div id="stepCounter" class="step-counter">STEP 1/5</div>
+
     <!-- 단계 표시 -->
     <div class="steps-indicator">
-      <span class="step-dot active">1</span>
-      <span class="step-dot">2</span>
-      <span class="step-dot">3</span>
-      <span class="step-dot">4</span>
-      <span class="step-dot">5</span>
+      <span class="step-dot active">방</span>
+      <span class="step-dot">인원</span>
+      <span class="step-dot">팀명</span>
+      <span class="step-dot">레벨</span>
+      <span class="step-dot">차량</span>
     </div>
 
     <form id="reservationForm" novalidate>
@@ -25,7 +27,7 @@
 
       <!-- 1단계: 방 선택 -->
       <div class="step" data-step="1">
-        <label>1단계: 방 선택 <span class="note">(관리자 선택)</span></label>
+        <label><span class="note">1단계: 방 선택 (관리자 선택) <span class="required">*</span></span></label>
         <div class="room-buttons">
           <button type="button" data-value="B1">대형 (B1)</button>
           <button type="button" data-value="A1">중형 (A1)</button>
@@ -36,7 +38,7 @@
 
       <!-- 2단계: 인원 입력 -->
       <div class="step" data-step="2" style="display:none;">
-        <label>2단계: 인원 입력</label>
+        <label><span class="note">2단계: 인원 입력 <span class="required">*</span></span></label>        
         <div class="field-group">
           <div class="field half">
             <label for="adultCount">성인 (인원)</label>
@@ -51,51 +53,54 @@
 
       <!-- 3단계: 팀명 입력 -->
       <div class="step" data-step="3" style="display:none;">
-        <label>3단계: 팀명 입력</label>
-        <div class="field">
+        <div class="field auto-teamname">
+          <label for="teamName" class="teamname-label">
+            3단계: 팀명 입력 <span class="required">*</span>
+            <button type="button" id="generateTeamNameBtn" class="tiny-btn">자동</button>
+          </label>
           <input type="text" id="teamName" name="teamName" placeholder="팀명을 입력하세요" required />
         </div>
       </div>
 
       <!-- 4단계: 난이도 선택 -->
-      <div class="step" data-step="4" style="display:none;">
-        <label>4단계: 난이도 선택</label>
+      <div class="step" data-step="4" style="display:none;">        
+        <label><span class="note">4단계: 난이도 선택 <span class="required">*</span></span></label>
         <div class="difficulty-buttons">
           <button type="button" data-value="ㅂ베이직">
-            <span class="label">베이직 ★</span>
-            <span class="desc">(👶처음이거나, 아이와 함께라면^^🎈)</span>
+            <span class="label">베이직 (★)</span>
+            <span class="desc">👶처음이거나, 아이와 함께라면^^🎈</span>
           </button>
           <button type="button" data-value="ㅇ이지">
-            <span class="label">이지 ★★</span>
-            <span class="desc">(😉처음인데, 내가 센스는 좀 있다!👍)</span>
+            <span class="label">이지 (★★)</span>
+            <span class="desc">😉처음인데, 내가 센스는 좀 있다!👍</span>
           </button>
           <button type="button" data-value="ㅅ우주">
-            <span class="label">우주 ★★★</span>
-            <span class="desc">(🌌우주급 도전, 준비됐나요?🚀)</span>
+            <span class="label">우주 (★★★)</span>
+            <span class="desc">🌌우주 테마맵 도전, 준비됐나요?🚀</span>
           </button>
-          <button type="button" data-value="ㄴ노말">
-            <span class="label">노말 ★★★★</span>
-            <span class="desc">(💪평소 운동 좀 한다!🏃‍♂️)</span>
+          <button type="button" data-value="ㄴ노멀">
+            <span class="label">노멀 (★★★★)</span>
+            <span class="desc">💪평소 운동 좀 한다!🏃‍♂️</span>
           </button>
           <button type="button" data-value="ㅎ하드">
-            <span class="label">하드 ★★★★★</span>
-            <span class="desc">(🤯발이 안보인다! 너무 어려워요!🥵)</span>
+            <span class="label">하드 (★★★★★)</span>
+            <span class="desc">🤯발이 안보인다! 너무 어려워요!🥵</span>
           </button>
           <button type="button" data-value="ㅊ챌린저">
-            <span class="label">챌린저 ★★★★★★</span>
-            <span class="desc">(🏆최강자 도전, 살아남을 수 있겠어?💥)</span>
+            <span class="label">챌린저 (★★★★★★)</span>
+            <span class="desc">🏆최강자 도전, 살아남을 수 있겠어?💥</span>
           </button>
         </div>
       </div>
 
       <!-- 5단계: 차량번호 입력 -->
-      <div class="step" data-step="5" style="display:none;">
-        <label>5단계: 차량번호 입력</label>
+      <div class="step" data-step="5" style="display:none;">        
+        <label><span class="note">5단계: 차량번호 입력 (뒤 4자리)</span></label>
         <input
           type="text"
           id="vehicle"
           name="vehicle"
-          placeholder="차량번호 뒤 4자리 (주차등록 필요 시)"
+          placeholder="ex)1234 //등록 필요 없을 경우 완료"
           inputmode="numeric"
           pattern="[0-9]*"
         />
@@ -104,8 +109,8 @@
       <!-- 네비게이션 버튼 -->
       <div class="step-nav">
         <button type="button" id="prevBtn">이전</button>
-        <button type="button" id="nextBtn">다음</button>
-        <button type="submit" id="submitBtn">완료 🚀</button>
+        <button type="button" id="nextBtn" disabled>다음</button> <!-- ★ disabled -->
+        <button type="submit" id="submitBtn" style="display:none;">완료 🚀</button>
       </div>
 
       <div id="result" class="result"></div>
